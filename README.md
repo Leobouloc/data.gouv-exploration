@@ -20,4 +20,6 @@ cd data.gouv-exploration
 python data_gouv_analysis.py
 ```
 
-This will download CSV files from data.gouv (btw, you can change `erase_csv_cache` to False to save space) and analyse them with csv_detective. Results will be stored in cache_json.
+## What ?
+
+This will download CSV files from data.gouv (btw, you can change `erase_csv_cache` to `True` to save space) and analyse them with csv_detective. Results will be stored in cache_json.
