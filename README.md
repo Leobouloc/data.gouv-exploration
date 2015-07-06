@@ -13,3 +13,11 @@ python setup.py install
 ```
 
 Then clone this package and run the script
+
+```
+git clone https://github.com/Leobouloc/data.gouv-exploration
+cd data.gouv-exploration
+python data_gouv_analysis.py
+```
+
+This will download CSV files from data.gouv (btw, you can change `erase_csv_cache` to False to save space) and analyse them with csv_detective. Results will be stored in cache_json.
