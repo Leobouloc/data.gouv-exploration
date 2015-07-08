@@ -4,9 +4,14 @@
 Extract files from "data.gouv" and detect columns
 '''
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 import os
 import requests
 import json
+import zipfile
 
 from csv_detective.explore_csv import routine
 
@@ -48,6 +53,8 @@ if __name__ == '__main__':
 
     # Will erase downloaded CSV's if variable is set to True
     erase_csv_cache = False
+    # Will not try to downoad files if set to True
+    from_cache_only = False
 
     ####
     # Temporary storage for csv files downloaded from data.gouv
@@ -59,16 +66,35 @@ if __name__ == '__main__':
     	os.mkdir('cache_json')
 
     list_tests = ['ALL', '-FR.geo.code_departement']
-    for file_path in download_all():
 
-        # Open your file and run csv_detective
-        with open(file_path, 'r') as file:
-            inspection_results = routine(file, user_input_tests = list_tests)
+    if from_cache_only:
+        generator = [os.path.join('.cache_csv', x) for x in os.listdir('.cache_csv')]
+        # generator = [x for x in generator if '.zip' in x]
+    else:
+        generator = download_all()
 
-        # Write your file as json
-        json_path = os.path.join('cache_json', os.path.basename(file_path).replace('.csv', '.json'))
-        with open(json_path, 'wb') as fp:
-            json.dump(inspection_results, fp, indent=4, separators=(',', ': '), encoding="utf-8")
+    # zfile = zipfile.ZipFile(generator[0])
+    # for name in zfile.namelist():
+    #     (dirname, filename) = os.path.split(name)
+    #     print "Decompressing " + filename + " on " + dirname
+    #     if not os.path.exists(dirname):
+    #         os.makedirs(dirname)
+    #     zfile.extract(name, dirname)
 
-        if erase_csv_cache:
-            os.remove(file_path)
+    # import pdb
+    # pdb.set_trace()
+
+    for idx, file_path in enumerate(generator):
+        print idx, 
+        if '.csv' in file_path:
+            # Open your file and run csv_detective
+            with open(file_path, 'r') as file:
+                inspection_results = routine(file, user_input_tests = list_tests)
+
+            # Write your file as json
+            json_path = os.path.join('cache_json', os.path.basename(file_path).replace('.csv', '.json'))
+            with open(json_path, 'wb') as fp:
+                json.dump(inspection_results, fp, indent=4, separators=(',', ': '), encoding="utf-8")
+
+            if erase_csv_cache:
+                os.remove(file_path)
